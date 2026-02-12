@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smart Chick Incubator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo">
+                    <i class="fa-solid fa-egg"></i>
+                    Smart Chick
+                </a>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#" class="active" id="nav-monitor">
+                        <i class="fa-solid fa-chart-line"></i> Monitoring
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="nav-control">
+                        <i class="fa-solid fa-sliders"></i> Device Control
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="logout()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <button id="sidebar-toggle" class="btn btn-outline" style="padding: 5px 10px; display: none;">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h2>Dashboard</h2>
+                <div class="user-profile">
+                    <span id="username-display">User</span>
+                    <div class="user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring View -->
+            <div id="view-monitoring">
+                <h3>Live Monitoring</h3>
+                <p>System Status: <span id="system-status" class="status-text status-on">Active</span></p>
+                <p style="font-size: 0.9rem; margin-bottom: 20px;">Last Update: <span id="last-update">Just now</span>
+                </p>
+
+                <div class="stats-grid">
+                    <!-- Temperature Card -->
+                    <div class="stat-card" id="card-temp">
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-temperature-half"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Temperature</h3>
+                            <div class="value"><span id="val-temp">--</span> °C</div>
+                        </div>
+                    </div>
+
+                    <!-- Humidity Card -->
+                    <div class="stat-card" id="card-humidity">
+                        <div class="stat-icon" style="color: var(--accent); background-color: #e0f7fa;">
+                            <i class="fa-solid fa-droplet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Humidity</h3>
+                            <div class="value"><span id="val-humidity">--</span> %</div>
+                        </div>
+                    </div>
+
+                    <!-- Rotation Card -->
+                    <div class="stat-card">
+                        <div class="stat-icon" style="color: purple; background-color: #f3e5f5;">
+                            <i class="fa-solid fa-rotate"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Last Rotation</h3>
+                            <div class="value" style="font-size: 1.2rem;" id="val-rotation">--:--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control View (Initially Hidden) -->
+            <div id="view-control" class="hidden">
+                <h3>Device Control</h3>
+                <p>Manual override for incubator components.</p>
+
+                <div class="controls-grid">
+                    <!-- Bulb Control -->
+                    <div class="control-card">
+                        <div class="control-icon" style="color: var(--secondary);">
+                            <i class="fa-regular fa-lightbulb"></i>
+                        </div>
+                        <h4>Heat Bulb</h4>
+                        <label class="switch">
+                            <input type="checkbox" id="ctrl-bulb">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Fan Control -->
+                    <div class="control-card">
+                        <div class="control-icon" style="color: var(--text-dark);">
+                            <i class="fa-solid fa-fan"></i>
+                        </div>
+                        <h4>Exhaust Fan</h4>
+                        <label class="switch">
+                            <input type="checkbox" id="ctrl-fan">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Humidifier Control -->
+                    <div class="control-card">
+                        <div class="control-icon" style="color: var(--accent);">
+                            <i class="fa-solid fa-water"></i>
+                        </div>
+                        <h4>Humidifier</h4>
+                        <label class="switch">
+                            <input type="checkbox" id="ctrl-humidifier">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <!-- Tray Rotation -->
+                    <div class="control-card">
+                        <div class="control-icon" style="color: purple;">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h4>Egg Tray</h4>
+                        <button class="btn btn-primary" id="btn-rotate" style="margin-top: 10px; width: 100%;">Rotate
+                            Now</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Inline script for Dashboard logic (View switching & Mock Data)
+
+        // --- Navigation ---
+        const navMonitor = document.getElementById('nav-monitor');
+        const navControl = document.getElementById('nav-control');
+        const viewMonitor = document.getElementById('view-monitoring');
+        const viewControl = document.getElementById('view-control');
+
+        navMonitor.addEventListener('click', (e) => {
+            e.preventDefault();
+            navMonitor.classList.add('active');
+            navControl.classList.remove('active');
+            viewMonitor.classList.remove('hidden');
+            viewControl.classList.add('hidden');
+        });
+
+        navControl.addEventListener('click', (e) => {
+            e.preventDefault();
+            navControl.classList.add('active');
+            navMonitor.classList.remove('active');
+            viewControl.classList.remove('hidden');
+            viewMonitor.classList.add('hidden');
+        });
+
+        // --- Mock Data Simulation ---
+        function getRandom(min, max) {
+            return (Math.random() * (max - min) + min).toFixed(1);
+        }
+
+        function updateMonitoring() {
+            // Mock Sensor Data
+            const temp = getRandom(36.0, 39.0); // Normal is ~37.5
+            const hum = getRandom(45, 75); // Normal is ~60
+
+            document.getElementById('val-temp').textContent = temp;
+            document.getElementById('val-humidity').textContent = parseInt(hum);
+
+            const now = new Date();
+            document.getElementById('last-update').textContent = now.toLocaleTimeString();
+
+            // Alerts
+            const cardTemp = document.getElementById('card-temp');
+            const cardHum = document.getElementById('card-humidity');
+
+            // Temp Alert (>38.5 or <36.5)
+            if (temp > 38.5 || temp < 36.5) {
+                cardTemp.classList.add('alert-danger');
+                // Browser notification could go here
+            } else {
+                cardTemp.classList.remove('alert-danger');
+            }
+
+            // Humidity Alert (>70 or <50)
+            if (hum > 70 || hum < 50) {
+                cardHum.classList.add('alert-danger');
+            } else {
+                cardHum.classList.remove('alert-danger');
+            }
+        }
+
+        // --- View Logic: Rotation ---
+        document.getElementById('val-rotation').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        document.getElementById('btn-rotate').addEventListener('click', () => {
+            const btn = document.getElementById('btn-rotate');
+            btn.disabled = true;
+            btn.textContent = 'Rotating...';
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.textContent = 'Rotate Now';
+                document.getElementById('val-rotation').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                alert('Tray rotated successfully!');
+            }, 3000);
+        });
+
+        // Start Auto-Refresh
+        setInterval(updateMonitoring, 5000);
+        updateMonitoring(); // Initial call
+
+        // --- Check Mobile Sidebar ---
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar-toggle').style.display = 'block';
+        }
+
+    </script>
+</body>
+
+</html>

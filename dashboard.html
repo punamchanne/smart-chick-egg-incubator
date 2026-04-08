@@ -33,6 +33,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="#" id="nav-live-monitor">
+                        <i class="fa-solid fa-video"></i> Live Monitor
+                    </a>
+                </li>
+                <li>
                     <a href="#" onclick="logout()">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </a>
@@ -153,6 +158,23 @@
                 </div>
             </div>
 
+            <!-- Live Monitor View (Initially Hidden) -->
+            <div id="view-live-monitor" class="hidden">
+                <h3>Live Monitor</h3>
+                <p>Real-time feed from your local camera.</p>
+                
+                <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 15px;">
+                    <a href="http://192.168.1.4/" target="_blank" class="btn btn-primary" style="align-self: flex-start; text-decoration: none;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Stream in New Tab
+                    </a>
+                    
+                    <div style="width: 100%; height: 60vh; background-color: #000; border-radius: 12px; overflow: hidden;">
+                        <!-- Embed the camera stream. Note: the ESP32 might need to allow iframes. -->
+                        <iframe src="http://192.168.1.4/" style="width: 100%; height: 100%; border: none;"></iframe>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -161,26 +183,28 @@
         // Inline script for Dashboard logic (View switching & Mock Data)
 
         // --- Navigation ---
-        const navMonitor = document.getElementById('nav-monitor');
-        const navControl = document.getElementById('nav-control');
-        const viewMonitor = document.getElementById('view-monitoring');
-        const viewControl = document.getElementById('view-control');
+        const navs = {
+            monitor: document.getElementById('nav-monitor'),
+            control: document.getElementById('nav-control'),
+            liveMonitor: document.getElementById('nav-live-monitor')
+        };
+        const views = {
+            monitor: document.getElementById('view-monitoring'),
+            control: document.getElementById('view-control'),
+            liveMonitor: document.getElementById('view-live-monitor')
+        };
 
-        navMonitor.addEventListener('click', (e) => {
-            e.preventDefault();
-            navMonitor.classList.add('active');
-            navControl.classList.remove('active');
-            viewMonitor.classList.remove('hidden');
-            viewControl.classList.add('hidden');
-        });
+        function switchView(target) {
+            Object.keys(navs).forEach(key => navs[key].classList.remove('active'));
+            Object.keys(views).forEach(key => views[key].classList.add('hidden'));
 
-        navControl.addEventListener('click', (e) => {
-            e.preventDefault();
-            navControl.classList.add('active');
-            navMonitor.classList.remove('active');
-            viewControl.classList.remove('hidden');
-            viewMonitor.classList.add('hidden');
-        });
+            navs[target].classList.add('active');
+            views[target].classList.remove('hidden');
+        }
+
+        navs.monitor.addEventListener('click', (e) => { e.preventDefault(); switchView('monitor'); });
+        navs.control.addEventListener('click', (e) => { e.preventDefault(); switchView('control'); });
+        navs.liveMonitor.addEventListener('click', (e) => { e.preventDefault(); switchView('liveMonitor'); });
 
         // --- Mock Data Simulation ---
         function getRandom(min, max) {
